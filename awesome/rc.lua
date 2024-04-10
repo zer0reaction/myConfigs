@@ -6,25 +6,25 @@ pcall(require, "luarocks.loader")
 local gears = require("gears")
 local awful = require("awful")
 require("awful.autofocus")
+
 -- Widget and layout library
+local wibox = require("wibox")
+
 -- Theme handling library
 local beautiful = require("beautiful")
+
 -- Notification library
 local naughty = require("naughty")
 local menubar = require("menubar")
 local hotkeys_popup = require("awful.hotkeys_popup")
+
 -- Enable hotkeys help widget for VIM and other apps
 -- when client with a matching name is opened:
 require("awful.hotkeys_popup.keys")
 
+
 -- For changing keyboard layout
 local keyboard_layout = require("keyboard_layout")
-local kbdcfg = keyboard_layout.kbdcfg({type = "tui"})
-
-kbdcfg.add_primary_layout("English", "US", "us")
-kbdcfg.add_primary_layout("Русский", "RU", "ru")
-kbdcfg.bind()
-
 local kbdcfg = keyboard_layout.kbdcfg({type = "gui"})
 
 kbdcfg.add_primary_layout("English", beautiful.en_layout, "us")
@@ -63,7 +63,6 @@ beautiful.init("/home/zer0/.config/awesome/zer0-theme/theme.lua")
 -- This is used later as the default terminal and editor to run.
 terminal = "alacritty"
 editor = "nvim"
--- editor = os.getenv("EDITOR") or "nano"
 editor_cmd = terminal .. " -e " .. editor
 
 -- Default modkey.
@@ -77,7 +76,7 @@ modkey = "Mod4"
 awful.layout.layouts = {
     awful.layout.suit.tile.left,
     awful.layout.suit.floating,
-    -- awful.layout.suit.tile.left,
+    -- awful.layout.suit.tile,
     -- awful.layout.suit.tile.bottom,
     -- awful.layout.suit.tile.top,
     -- awful.layout.suit.fair,
@@ -106,15 +105,65 @@ myawesomemenu = {
 
 mymainmenu = awful.menu({ items = { { "awesome", myawesomemenu, beautiful.awesome_icon },
                                     { "open terminal", terminal },
-                                    { "open browser", function() awful.spawn("waterfox") end },
+                                    { "open browser", function() awful.spawn("firefox") end },
                                     { "suspend", function() awful.spawn("systemctl suspend") end },
                                     { "power off", function() awful.spawn("shutdown now") end }
                                   }
                         })
 
+mylauncher = awful.widget.launcher({ image = beautiful.awesome_icon,
+                                     menu = mymainmenu })
+
 -- Menubar configuration
 menubar.utils.terminal = terminal -- Set the terminal for applications that require it
 -- }}}
+
+-- Keyboard map indicator and switcher
+mykeyboardlayout = awful.widget.keyboardlayout()
+
+-- {{{ Wibar
+-- Create a textclock widget
+mytextclock = wibox.widget.textclock()
+
+-- Create a wibox for each screen and add it
+local taglist_buttons = gears.table.join(
+                    awful.button({ }, 1, function(t) t:view_only() end),
+                    awful.button({ modkey }, 1, function(t)
+                                              if client.focus then
+                                                  client.focus:move_to_tag(t)
+                                              end
+                                          end),
+                    awful.button({ }, 3, awful.tag.viewtoggle),
+                    awful.button({ modkey }, 3, function(t)
+                                              if client.focus then
+                                                  client.focus:toggle_tag(t)
+                                              end
+                                          end),
+                    awful.button({ }, 4, function(t) awful.tag.viewnext(t.screen) end),
+                    awful.button({ }, 5, function(t) awful.tag.viewprev(t.screen) end)
+                )
+
+local tasklist_buttons = gears.table.join(
+                     awful.button({ }, 1, function (c)
+                                              if c == client.focus then
+                                                  c.minimized = true
+                                              else
+                                                  c:emit_signal(
+                                                      "request::activate",
+                                                      "tasklist",
+                                                      {raise = true}
+                                                  )
+                                              end
+                                          end),
+                     awful.button({ }, 3, function()
+                                              awful.menu.client_list({ theme = { width = 250 } })
+                                          end),
+                     awful.button({ }, 4, function ()
+                                              awful.client.focus.byidx(1)
+                                          end),
+                     awful.button({ }, 5, function ()
+                                              awful.client.focus.byidx(-1)
+                                          end))
 
 local function set_wallpaper(s)
     -- Wallpaper
@@ -137,7 +186,54 @@ awful.screen.connect_for_each_screen(function(s)
 
     -- Each screen has its own tag table.
     awful.tag({ "1", "2", "3", "4", "5", "6", "7", "8", "9" }, s, awful.layout.layouts[1])
+
+    -- Create a promptbox for each screen
+    s.mypromptbox = awful.widget.prompt()
+    -- Create an imagebox widget which will contain an icon indicating which layout we're using.
+    -- We need one layoutbox per screen.
+    s.mylayoutbox = awful.widget.layoutbox(s)
+    s.mylayoutbox:buttons(gears.table.join(
+                           awful.button({ }, 1, function () awful.layout.inc( 1) end),
+                           awful.button({ }, 3, function () awful.layout.inc(-1) end),
+                           awful.button({ }, 4, function () awful.layout.inc( 1) end),
+                           awful.button({ }, 5, function () awful.layout.inc(-1) end)))
+    -- Create a taglist widget
+    s.mytaglist = awful.widget.taglist {
+        screen  = s,
+        filter  = awful.widget.taglist.filter.all,
+        buttons = taglist_buttons
+    }
+
+    -- Create a tasklist widget
+    s.mytasklist = awful.widget.tasklist {
+        screen  = s,
+        filter  = awful.widget.tasklist.filter.currenttags,
+        buttons = tasklist_buttons
+    }
+
+    -- Create the wibox
+    s.mywibox = awful.wibar({ position = "top", screen = s })
+
+    -- Add widgets to the wibox
+    s.mywibox:setup {
+        layout = wibox.layout.align.horizontal,
+        { -- Left widgets
+            layout = wibox.layout.fixed.horizontal,
+            mylauncher,
+            s.mytaglist,
+            s.mypromptbox,
+        },
+        s.mytasklist, -- Middle widget
+        { -- Right widgets
+            layout = wibox.layout.fixed.horizontal,
+            mykeyboardlayout,
+            wibox.widget.systray(),
+            mytextclock,
+            s.mylayoutbox,
+        },
+    }
 end)
+-- }}}
 
 -- {{{ Mouse bindings
 root.buttons(gears.table.join(
@@ -230,21 +326,33 @@ globalkeys = gears.table.join(
               end,
               {description = "restore minimized", group = "client"}),
 
+    -- Prompt
+    awful.key({ modkey },            "r",     function () awful.spawn("dmenu_run -fn '0xProto Nerd Font Mono-20'") end,
+              {description = "run prompt", group = "launcher"}),
+
+    awful.key({ modkey }, "x",
+              function ()
+                  awful.prompt.run {
+                    prompt       = "Run Lua code: ",
+                    textbox      = awful.screen.focused().mypromptbox.widget,
+                    exe_callback = awful.util.eval,
+                    history_path = awful.util.get_cache_dir() .. "/history_eval"
+                  }
+              end,
+              {description = "lua execute prompt", group = "awesome"}),
     -- Menubar
     awful.key({ modkey }, "p", function() menubar.show() end,
               {description = "show the menubar", group = "launcher"}),
 
     -- User added key bindings
-    awful.key({ modkey }, "b", function() awful.util.spawn("waterfox") end,
+    awful.key({ modkey }, "b", function() awful.util.spawn("firefox") end,
               {description = "open web browser", group = "launcher"}),
-    awful.key({ modkey }, "r", function() awful.util.spawn("dmenu_run") end,
-              {description = "run dmenu", group = "launcher"}),
     -- Shift-Alt to change keyboard layout
     awful.key({"Shift"}, "Alt_L", function () kbdcfg.switch_next() end),
     -- Alt-Shift to change keyboard layout
     awful.key({"Mod1"}, "Shift_L", function () kbdcfg.switch_next() end)
-)
 
+)
 
 clientkeys = gears.table.join(
     awful.key({ modkey,           }, "f",
@@ -407,7 +515,7 @@ awful.rules.rules = {
 
     -- Add titlebars to normal clients and dialogs
     { rule_any = {type = { "normal", "dialog" }
-      }, properties = { titlebars_enabled = false }
+      }, properties = { titlebars_enabled = true }
     },
 
     -- Set Firefox to always map on the tag named "2" on screen 1.
@@ -445,25 +553,29 @@ client.connect_signal("request::titlebars", function(c)
         end)
     )
 
-    awful.titlebar(c) : setup {
+    awful.titlebar(c, { size = 20 }) : setup {
         { -- Left
             awful.titlebar.widget.iconwidget(c),
             buttons = buttons,
+            layout  = wibox.layout.fixed.horizontal
         },
         { -- Middle
-            { -- Title
-                align  = "center",
-                widget = awful.titlebar.widget.titlewidget(c)
-            },
+            --{ -- Title
+            --    align  = "center",
+            --    widget = awful.titlebar.widget.titlewidget(c)
+            --},
             buttons = buttons,
+            layout  = wibox.layout.flex.horizontal
         },
         { -- Right
-            awful.titlebar.widget.floatingbutton (c),
-            awful.titlebar.widget.maximizedbutton(c),
-            awful.titlebar.widget.stickybutton   (c),
-            awful.titlebar.widget.ontopbutton    (c),
-            awful.titlebar.widget.closebutton    (c),
-        }
+            -- awful.titlebar.widget.floatingbutton (c),
+            -- awful.titlebar.widget.maximizedbutton(c),
+            -- awful.titlebar.widget.stickybutton   (c),
+            -- awful.titlebar.widget.ontopbutton    (c),
+            -- awful.titlebar.widget.closebutton    (c),
+            layout = wibox.layout.fixed.horizontal()
+        },
+        layout = wibox.layout.align.horizontal
     }
 end)
 
@@ -480,5 +592,3 @@ client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_n
 awful.spawn.with_shell("/home/zer0/.config/awesome/xrandr-settings.sh")
 awful.spawn.with_shell("/home/zer0/.config/polybar/launch.sh")
 awful.spawn.with_shell("picom")
-awful.spawn.with_shell("telegram-desktop")
-awful.spawn.with_shell("setxkbmap -option caps:escape")

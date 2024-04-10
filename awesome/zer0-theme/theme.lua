@@ -10,7 +10,7 @@ local theme = {}
 theme.font          = "sans 15"
 
 theme.bg_normal     = "#222222"
-theme.bg_focus      = "#535d6c"
+theme.bg_focus      = "#0f0f0f"
 theme.bg_urgent     = "#ff0000"
 theme.bg_minimize   = "#444444"
 theme.bg_systray    = theme.bg_normal
@@ -18,12 +18,12 @@ theme.bg_systray    = theme.bg_normal
 theme.fg_normal     = "#aaaaaa"
 theme.fg_focus      = "#ffffff"
 theme.fg_urgent     = "#ffffff"
-theme.fg_minimize   = "#ffffff"
+theme.fg_minimize   = "#d0d0d0"
 
-theme.useless_gap   = dpi(10)
-theme.border_width  = dpi(5)
-theme.border_normal = "#111111"
-theme.border_focus  = "#bf00ff"
+theme.useless_gap   = dpi(5)
+theme.border_width  = dpi(3)
+theme.border_normal = "#0f0f0f"
+theme.border_focus  = "#fcaa3a"
 theme.border_marked = "#91231c"
 
 -- There are other variable sets

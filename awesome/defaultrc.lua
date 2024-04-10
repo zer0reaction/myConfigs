@@ -18,21 +18,6 @@ local hotkeys_popup = require("awful.hotkeys_popup")
 -- when client with a matching name is opened:
 require("awful.hotkeys_popup.keys")
 
-
--- For changing keyboard layout
-local keyboard_layout = require("keyboard_layout")
-local kbdcfg = keyboard_layout.kbdcfg({type = "tui"})
-
-kbdcfg.add_primary_layout("English", "US", "us")
-kbdcfg.add_primary_layout("Русский", "RU", "ru")
-kbdcfg.bind()
-
-local kbdcfg = keyboard_layout.kbdcfg({type = "gui"})
-
-kbdcfg.add_primary_layout("English", beautiful.en_layout, "us")
-kbdcfg.add_primary_layout("Русский", beautiful.ru_layout, "ru")
-kbdcfg.bind()
-
 -- {{{ Error handling
 -- Check if awesome encountered an error during startup and fell back to
 -- another config (This code will only ever execute for the fallback config)
@@ -60,11 +45,11 @@ end
 
 -- {{{ Variable definitions
 -- Themes define colours, icons, font and wallpapers.
-beautiful.init("/home/zer0/.config/awesome/zer0-theme/theme.lua")
+beautiful.init(gears.filesystem.get_themes_dir() .. "default/theme.lua")
 
 -- This is used later as the default terminal and editor to run.
-terminal = "alacritty"
-editor = "nvim"
+terminal = "xterm"
+editor = os.getenv("EDITOR") or "nano"
 editor_cmd = terminal .. " -e " .. editor
 
 -- Default modkey.
@@ -76,19 +61,19 @@ modkey = "Mod4"
 
 -- Table of layouts to cover with awful.layout.inc, order matters.
 awful.layout.layouts = {
-    awful.layout.suit.tile.left,
     awful.layout.suit.floating,
-    -- awful.layout.suit.tile,
-    -- awful.layout.suit.tile.bottom,
-    -- awful.layout.suit.tile.top,
-    -- awful.layout.suit.fair,
-    -- awful.layout.suit.fair.horizontal,
-    -- awful.layout.suit.spiral,
-    -- awful.layout.suit.spiral.dwindle,
-    -- awful.layout.suit.max,
-    -- awful.layout.suit.max.fullscreen,
-    -- awful.layout.suit.magnifier,
-    -- awful.layout.suit.corner.nw,
+    awful.layout.suit.tile,
+    awful.layout.suit.tile.left,
+    awful.layout.suit.tile.bottom,
+    awful.layout.suit.tile.top,
+    awful.layout.suit.fair,
+    awful.layout.suit.fair.horizontal,
+    awful.layout.suit.spiral,
+    awful.layout.suit.spiral.dwindle,
+    awful.layout.suit.max,
+    awful.layout.suit.max.fullscreen,
+    awful.layout.suit.magnifier,
+    awful.layout.suit.corner.nw,
     -- awful.layout.suit.corner.ne,
     -- awful.layout.suit.corner.sw,
     -- awful.layout.suit.corner.se,
@@ -106,10 +91,7 @@ myawesomemenu = {
 }
 
 mymainmenu = awful.menu({ items = { { "awesome", myawesomemenu, beautiful.awesome_icon },
-                                    { "open terminal", terminal },
-                                    { "open browser", function() awful.spawn("firefox") end },
-                                    { "suspend", function() awful.spawn("systemctl suspend") end },
-                                    { "power off", function() awful.spawn("shutdown now") end }
+                                    { "open terminal", terminal }
                                   }
                         })
 
@@ -239,9 +221,9 @@ end)
 
 -- {{{ Mouse bindings
 root.buttons(gears.table.join(
-    awful.button({ }, 3, function () mymainmenu:toggle() end)
-    -- awful.button({ }, 4, awful.tag.viewnext),
-    -- awful.button({ }, 5, awful.tag.viewprev)
+    awful.button({ }, 3, function () mymainmenu:toggle() end),
+    awful.button({ }, 4, awful.tag.viewnext),
+    awful.button({ }, 5, awful.tag.viewprev)
 ))
 -- }}}
 
@@ -329,7 +311,7 @@ globalkeys = gears.table.join(
               {description = "restore minimized", group = "client"}),
 
     -- Prompt
-    awful.key({ modkey },            "r",     function () awful.spawn("dmenu") end,
+    awful.key({ modkey },            "r",     function () awful.screen.focused().mypromptbox:run() end,
               {description = "run prompt", group = "launcher"}),
 
     awful.key({ modkey }, "x",
@@ -344,16 +326,7 @@ globalkeys = gears.table.join(
               {description = "lua execute prompt", group = "awesome"}),
     -- Menubar
     awful.key({ modkey }, "p", function() menubar.show() end,
-              {description = "show the menubar", group = "launcher"}),
-
-    -- User added key bindings
-    awful.key({ modkey }, "b", function() awful.util.spawn("firefox") end,
-              {description = "open web browser", group = "launcher"}),
-    -- Shift-Alt to change keyboard layout
-    awful.key({"Shift"}, "Alt_L", function () kbdcfg.switch_next() end),
-    -- Alt-Shift to change keyboard layout
-    awful.key({"Mod1"}, "Shift_L", function () kbdcfg.switch_next() end)
-
+              {description = "show the menubar", group = "launcher"})
 )
 
 clientkeys = gears.table.join(
@@ -451,9 +424,9 @@ for i = 1, 9 do
 end
 
 clientbuttons = gears.table.join(
---    awful.button({ }, 1, function (c)
---        c:emit_signal("request::activate", "mouse_click", {raise = true})
---    end),
+    awful.button({ }, 1, function (c)
+        c:emit_signal("request::activate", "mouse_click", {raise = true})
+    end),
     awful.button({ modkey }, 1, function (c)
         c:emit_signal("request::activate", "mouse_click", {raise = true})
         awful.mouse.client.move(c)
@@ -555,26 +528,26 @@ client.connect_signal("request::titlebars", function(c)
         end)
     )
 
-    awful.titlebar(c, { size = 40 }) : setup {
+    awful.titlebar(c) : setup {
         { -- Left
             awful.titlebar.widget.iconwidget(c),
             buttons = buttons,
             layout  = wibox.layout.fixed.horizontal
         },
         { -- Middle
-            --{ -- Title
-            --    align  = "center",
-            --    widget = awful.titlebar.widget.titlewidget(c)
-            --},
+            { -- Title
+                align  = "center",
+                widget = awful.titlebar.widget.titlewidget(c)
+            },
             buttons = buttons,
             layout  = wibox.layout.flex.horizontal
         },
         { -- Right
-            -- awful.titlebar.widget.floatingbutton (c),
-            -- awful.titlebar.widget.maximizedbutton(c),
-            -- awful.titlebar.widget.stickybutton   (c),
-            -- awful.titlebar.widget.ontopbutton    (c),
-            -- awful.titlebar.widget.closebutton    (c),
+            awful.titlebar.widget.floatingbutton (c),
+            awful.titlebar.widget.maximizedbutton(c),
+            awful.titlebar.widget.stickybutton   (c),
+            awful.titlebar.widget.ontopbutton    (c),
+            awful.titlebar.widget.closebutton    (c),
             layout = wibox.layout.fixed.horizontal()
         },
         layout = wibox.layout.align.horizontal
@@ -589,8 +562,3 @@ end)
 client.connect_signal("focus", function(c) c.border_color = beautiful.border_focus end)
 client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
 -- }}}
-
--- Autostart apps
-awful.spawn.with_shell("/home/zer0/.config/awesome/xrandr-settings.sh")
-awful.spawn.with_shell("/home/zer0/.config/polybar/launch.sh")
-awful.spawn.with_shell("picom")
