@@ -56,6 +56,10 @@ return require('packer').startup(function(use)
 			{"rafamadriz/friendly-snippets"},
 		}
 	}
+
     use('norcalli/nvim-colorizer.lua')
 
+    use("gbprod/yanky.nvim")
+
+    use("hiphish/rainbow-delimiters.nvim")
 end)

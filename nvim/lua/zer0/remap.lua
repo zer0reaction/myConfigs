@@ -23,5 +23,8 @@ vim.keymap.set("x", "<leader>p", "\"_dP")
 vim.keymap.set("v", "<leader>y", "\"+y")
 
 -- for pasting from real clipboard
-vim.keymap.set("n", "<leader>p", "\"+P")
-vim.keymap.set("v", "<leader>p", "\"+P")
+vim.keymap.set("n", "<leader>p", "\"+p")
+vim.keymap.set("v", "<leader>p", "\"+p")
+
+vim.keymap.set("n", "<esc>", vim.cmd.nohl)
+vim.keymap.set("i", "<esc>", vim.cmd.nohl)
