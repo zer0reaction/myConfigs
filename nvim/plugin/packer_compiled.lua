@@ -159,6 +159,11 @@ _G.packer_plugins = {
     path = "/home/zer0/.local/share/nvim/site/pack/packer/start/plenary.nvim",
     url = "https://github.com/nvim-lua/plenary.nvim"
   },
+  ["python-lsp-server"] = {
+    loaded = true,
+    path = "/home/zer0/.local/share/nvim/site/pack/packer/start/python-lsp-server",
+    url = "https://github.com/python-lsp/python-lsp-server"
+  },
   ["rainbow-delimiters.nvim"] = {
     loaded = true,
     path = "/home/zer0/.local/share/nvim/site/pack/packer/start/rainbow-delimiters.nvim",

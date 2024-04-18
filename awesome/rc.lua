@@ -185,7 +185,7 @@ awful.screen.connect_for_each_screen(function(s)
     set_wallpaper(s)
 
     -- Each screen has its own tag table.
-    awful.tag({ "1", "2", "3", "4", "5", "6", "7", "8", "9" }, s, awful.layout.layouts[1])
+    awful.tag({ "www", "code", "etc", "4", "5", "6", "7", "8", "9" }, s, awful.layout.layouts[1])
 
     -- Create a promptbox for each screen
     s.mypromptbox = awful.widget.prompt()
@@ -211,27 +211,27 @@ awful.screen.connect_for_each_screen(function(s)
         buttons = tasklist_buttons
     }
 
-    -- Create the wibox
-    s.mywibox = awful.wibar({ position = "top", screen = s })
-
-    -- Add widgets to the wibox
-    s.mywibox:setup {
-        layout = wibox.layout.align.horizontal,
-        { -- Left widgets
-            layout = wibox.layout.fixed.horizontal,
-            mylauncher,
-            s.mytaglist,
-            s.mypromptbox,
-        },
-        s.mytasklist, -- Middle widget
-        { -- Right widgets
-            layout = wibox.layout.fixed.horizontal,
-            mykeyboardlayout,
-            wibox.widget.systray(),
-            mytextclock,
-            s.mylayoutbox,
-        },
-    }
+--     -- Create the wibox
+--     s.mywibox = awful.wibar({ position = "top", screen = s })
+-- 
+--     -- Add widgets to the wibox
+--     s.mywibox:setup {
+--         layout = wibox.layout.align.horizontal,
+--         { -- Left widgets
+--             layout = wibox.layout.fixed.horizontal,
+--             mylauncher,
+--             s.mytaglist,
+--             s.mypromptbox,
+--         },
+--         s.mytasklist, -- Middle widget
+--         { -- Right widgets
+--             layout = wibox.layout.fixed.horizontal,
+--             mykeyboardlayout,
+--             wibox.widget.systray(),
+--             mytextclock,
+--             s.mylayoutbox,
+--         },
+--     }
 end)
 -- }}}
 
@@ -242,6 +242,23 @@ root.buttons(gears.table.join(
     -- awful.button({ }, 5, awful.tag.viewprev)
 ))
 -- }}}
+
+local brightness = 0.7
+local function applyBrightness(b)
+    awful.spawn("xrandr --output eDP-1 --brightness " .. tostring(b))
+end
+
+local function increaseBrightness()
+    brightness = brightness + 0.1
+    applyBrightness(brightness)
+end
+
+local function decreaseBrightness()
+    brightness = brightness - 0.1
+    applyBrightness(brightness)
+end
+
+applyBrightness(brightness)
 
 -- {{{ Key bindings
 globalkeys = gears.table.join(
@@ -347,6 +364,13 @@ globalkeys = gears.table.join(
     -- User added key bindings
     awful.key({ modkey }, "b", function() awful.util.spawn("firefox") end,
               {description = "open web browser", group = "launcher"}),
+
+    -- For increasing and decreasing screen brightness
+    awful.key({ modkey }, "F1", function() decreaseBrightness() end,
+              {description = "decrease screen brightness", group = "screen"}),
+    awful.key({ modkey }, "F2", function() increaseBrightness() end,
+              {description = "increase screen brightness", group = "screen"}),
+
     -- Shift-Alt to change keyboard layout
     awful.key({"Shift"}, "Alt_L", function () kbdcfg.switch_next() end),
     -- Alt-Shift to change keyboard layout
@@ -572,7 +596,7 @@ client.connect_signal("request::titlebars", function(c)
             -- awful.titlebar.widget.maximizedbutton(c),
             -- awful.titlebar.widget.stickybutton   (c),
             -- awful.titlebar.widget.ontopbutton    (c),
-            -- awful.titlebar.widget.closebutton    (c),
+            awful.titlebar.widget.closebutton    (c),
             layout = wibox.layout.fixed.horizontal()
         },
         layout = wibox.layout.align.horizontal

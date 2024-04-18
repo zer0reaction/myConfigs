@@ -62,4 +62,5 @@ return require('packer').startup(function(use)
     use("gbprod/yanky.nvim")
 
     use("hiphish/rainbow-delimiters.nvim")
+    use("python-lsp/python-lsp-server")
 end)
