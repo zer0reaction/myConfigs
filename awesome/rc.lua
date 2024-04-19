@@ -245,16 +245,22 @@ root.buttons(gears.table.join(
 
 local brightness = 0.7
 local function applyBrightness(b)
-    awful.spawn("xrandr --output eDP-1 --brightness " .. tostring(b))
+    if brightness >= 0.5 and brightness <= 1.0 then
+        awful.spawn("xrandr --output eDP-1 --brightness " .. tostring(b))
+    end
 end
 
 local function increaseBrightness()
-    brightness = brightness + 0.1
+    if brightness < 1.0 then
+        brightness = brightness + 0.1
+    end
     applyBrightness(brightness)
 end
 
 local function decreaseBrightness()
-    brightness = brightness - 0.1
+    if brightness > 0.5 then
+        brightness = brightness - 0.1
+    end
     applyBrightness(brightness)
 end
 
