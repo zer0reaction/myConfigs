@@ -25,3 +25,6 @@ vim.keymap.set("v", "<leader>y", "\"+y")
 -- for pasting from real clipboard
 vim.keymap.set("n", "<leader>p", "\"+p")
 vim.keymap.set("v", "<leader>p", "\"+p")
+
+-- saving file keymap
+vim.keymap.set("n", "<C-s>", ":w<CR>")
