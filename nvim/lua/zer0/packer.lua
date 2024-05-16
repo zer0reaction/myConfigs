@@ -62,5 +62,14 @@ return require('packer').startup(function(use)
     use("gbprod/yanky.nvim")
 
     use("hiphish/rainbow-delimiters.nvim")
+
     use("python-lsp/python-lsp-server")
+
+    use {
+        "windwp/nvim-autopairs",
+        event = "InsertEnter",
+        config = function()
+            require("nvim-autopairs").setup {}
+        end
+    }
 end)
