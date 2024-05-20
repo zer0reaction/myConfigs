@@ -6,7 +6,8 @@ general {
 
 order += "cpu_temperature 0"
 order += "memory"
-order += "load"
+order += "cpu_usage"
+order += "disk /"
 order += "tztime local"
 
 wireless wlan0 {
@@ -45,7 +46,7 @@ path_exists VPN {
 }
 
 tztime local {
-        format = "%Y-%m-%d %H:%M:%S"
+        format = "%d-%m-%Y %H:%M:%S"
 }
 
 tztime berlin {
@@ -54,12 +55,12 @@ tztime berlin {
 }
 
 load {
-        format = "%5min"
+        format = "%usage CPU_0: %cpu0 CPU_1: %cpu1"
 }
 
 cpu_temperature 0 {
         format = "T: %degrees °C"
-        path = "/sys/devices/platform/coretemp.0/hwmon/hwmon4/temp1_input"
+        path = "/sys/devices/platform/coretemp.0/hwmon/hwmon3/temp1_input"
 }
 
 memory {
@@ -74,4 +75,9 @@ disk "/" {
 
 read_file uptime {
         path = "/proc/uptime"
+}
+
+cpu_usage {
+    format = "CPU: %usage"
+    max_threshold = 75
 }
