@@ -72,4 +72,10 @@ return require('packer').startup(function(use)
             require("nvim-autopairs").setup {}
         end
     }
+
+    use {
+        "ThePrimeagen/harpoon",
+        branch = "harpoon2",
+        requires = { {"nvim-lua/plenary.nvim"} }
+    }
 end)

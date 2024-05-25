@@ -59,18 +59,18 @@ load {
 }
 
 cpu_temperature 0 {
-        format = "T: %degrees °C"
+        format = "%degrees °C"
         path = "/sys/devices/platform/coretemp.0/hwmon/hwmon3/temp1_input"
 }
 
 memory {
-        format = "%used"
+        format = "RAM: %used"
         threshold_degraded = "10%"
         format_degraded = "MEMORY: %free"
 }
 
 disk "/" {
-        format = "%free"
+        format = "MEM: %free"
 }
 
 read_file uptime {

@@ -2,67 +2,67 @@
 program = "/usr/bin/fish"
 
 [font]
-size = 12.0
+size = 18.0
 
 [font.normal]
-family = "CousineNerdFontPropo"
+family = "Hack"
 style = "Regular"
 
 [font.bold]
-family = "CousineNerdFontPropo"
+family = "Hack"
 style = "Bold"
 
 [font.bold_italic]
-family = "CousineNerdFontPropo"
+family = "Hack"
 style = "Bold Italic"
 
 [font.italic]
-family = "CousineNerdFontPropo"
+family = "Hack"
 style = "Italic"
 
 [window]
 opacity = 0.9
-
-[colors.primary]
-background = '#0f0f0f'
-foreground = '#D6D6D6'
-
-[colors.cursor]
-text = '#1E1E2E'
-cursor = '#D9D9D9'
-
-[colors.normal]
-black = '#181A1F'
-red = '#E86671'
-green = '#98C379'
-yellow = '#E5C07B'
-# green = '#E5C07B'
-# yellow = '#98C379'
-blue = '#61AFEF'
-magenta = '#C678DD'
-cyan = '#54AFBC'
-white = '#ABB2BF'
-
-[colors.bright]
-black = '#5C6370'
-red = '#E86671'
-green = '#98C379'
-yellow = '#E5C07B'
-# yellow = '#98C379'
-# green = '#E5C07B'
-blue = '#61AFEF'
-magenta = '#C678DD'
-cyan = '#54AFBC'
-white = '#F7F7F7'
-
-[colors.dim]
-black = '#5C6370'
-red = '#74423F'
+ 
+# [colors.primary]
+# background = '#0f0f0f'
+# foreground = '#D6D6D6'
+# 
+# [colors.cursor]
+# text = '#1E1E2E'
+# cursor = '#D9D9D9'
+# 
+# [colors.normal]
+# black = '#181A1F'
+# red = '#E86671'
 # green = '#98C379'
-yellow = '#98C379'
 # yellow = '#E5C07B'
-green = '#E5C07B'
-blue = '#61AFEF'
-magenta = '#6E4962'
-cyan = '#5C8482'
-white = '#828282'
+# # green = '#E5C07B'
+# # yellow = '#98C379'
+# blue = '#61AFEF'
+# magenta = '#C678DD'
+# cyan = '#54AFBC'
+# white = '#ABB2BF'
+# 
+# [colors.bright]
+# black = '#5C6370'
+# red = '#E86671'
+# green = '#98C379'
+# yellow = '#E5C07B'
+# # yellow = '#98C379'
+# # green = '#E5C07B'
+# blue = '#61AFEF'
+# magenta = '#C678DD'
+# cyan = '#54AFBC'
+# white = '#F7F7F7'
+# 
+# [colors.dim]
+# black = '#5C6370'
+# red = '#74423F'
+# # green = '#98C379'
+# yellow = '#98C379'
+# # yellow = '#E5C07B'
+# green = '#E5C07B'
+# blue = '#61AFEF'
+# magenta = '#6E4962'
+# cyan = '#5C8482'
+# white = '#828282'
