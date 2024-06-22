@@ -1,9 +1,4 @@
-set fish_greeting "TODO:
-Python 9 hour course
-Enum
-Minesweeper
-Tetris
-"
+set fish_greeting ""
 
 alias "c" clear
 
